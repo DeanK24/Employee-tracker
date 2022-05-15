@@ -143,6 +143,26 @@ addEmployee = () => {
   });
 };
 
+updateEmployeeRole = () => {
+  const sql = `SELECT * FROM employee`;
+
+  db.query(sql, function (err, res) {
+    if (err) {
+      throw err;
+    }
+
+    const updateEmployee = res.map(employee => {
+      return {
+        name: `${employee.first_name} ${employee.last_name}`,
+        value: employee.id
+      }
+    });
+
+    console.table(res);
+    updateRole(updateEmployee)
+  })
+}
+
 //prompts for adding new stuff
 promptAddingNewDepartment = () => {
   inquirer
@@ -226,7 +246,7 @@ promptAddNewEmployee = (roles) => {
 
       {
         type: 'list',
-        name: 'roleId',
+        name: 'roleID',
         message: "What is the new employee's role?",
         choices: roles
       },
@@ -246,9 +266,9 @@ promptAddNewEmployee = (roles) => {
     ])
     .then(function (input) {
       console.table(input);
-      const sql = `INSERT INTO employee (first_name, last_name, roleId, managerID, manager) VALUES (?, ?, ?, ?, ?)`;
+      const sql = `INSERT INTO employee (first_name, last_name, role_ID, manager_ID, manager) VALUES (?, ?, ?, ?, ?)`;
       
-      db.query(sql, [input.first_name, input.last_name, input.roleId, input.managerID, input.manager], function (err, res) {
+      db.query(sql, [input.first_name, input.last_name, input.roleID, input.managerID, input.manager], function (err, res) {
         if (err) {
           throw err;
         }

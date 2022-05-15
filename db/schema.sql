@@ -20,7 +20,8 @@ CREATE TABLE employee (
     id INTEGER AUTO_INCREMENT NOT NULL,
     first_name VARCHAR(30) NOT NULL,
     last_name VARCHAR(30) NOT NULL,
-    role_id INTEGER, 
-    manager_id INTEGER,
+    role_ID INTEGER, 
+    manager_ID INTEGER,
+    manager BOOLEAN NOT NULL,
     PRIMARY KEY (id)
 );
