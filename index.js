@@ -80,7 +80,10 @@ viewEmployees = () => {
   const sql = `SELECT * FROM employee`;
 
   db.query(sql, function (err, res) {
-    if (err) throw err;
+    if (err) {
+      throw err;
+    }
+
     console.table(res);
     initialPrompt();
   });
@@ -160,6 +163,27 @@ updateEmployeeRole = () => {
 
     console.table(res);
     updateRole(updateEmployee)
+  });
+};
+
+updateRole = (updateEmployee) => {
+  const sql = `SELECT * FROM roles`;
+
+  db.query(sql, function (err, res) {
+    if (err) {
+      throw err;
+    }
+
+    const roles = res.map(roles => {
+      return {
+        name: roles.title,
+        value: roles.id,
+        salary: roles.salary
+      }
+    });
+
+    console.table(res);
+    promptUpdating(updateEmployee, roles)
   })
 }
 
@@ -256,24 +280,51 @@ promptAddNewEmployee = (roles) => {
         name: 'managerID',
         message: "What is the new employee's manager ID?"
       },
-      
-      {
-        type: 'confirm',
-        name: 'manager',
-        message: 'Is this employee a manager?',
-        default: false
-      },
     ])
     .then(function (input) {
       console.table(input);
-      const sql = `INSERT INTO employee (first_name, last_name, role_ID, manager_ID, manager) VALUES (?, ?, ?, ?, ?)`;
+      const sql = `INSERT INTO employee (first_name, last_name, role_ID, manager_ID) VALUES (?, ?, ?, ?)`;
       
-      db.query(sql, [input.first_name, input.last_name, input.roleID, input.managerID, input.manager], function (err, res) {
+      db.query(sql, [input.first_name, input.last_name, input.roleID, input.managerID], function (err, res) {
         if (err) {
           throw err;
         }
         console.log(err)
 ;        console.table(res);
+
+        initialPrompt();
+      });
+    });
+};
+
+promptUpdating = (updateEmployee, roles) => {
+  inquirer
+    .prompt([
+      {
+        type: 'list',
+        name: 'employeeID',
+        message: "What employee would you like to update?",
+        choices: updateEmployee
+      },
+
+      {
+        type: 'list',
+        name: 'roleID',
+        message: "What will the employee's new role be ?",
+        choice: roles
+      },
+    ])
+    .then(function (input) {
+      console.table(input);
+
+      const sql = `UPDATE employee SET role_ID = ? WHERE id = ?`;
+
+      db.query(sql, [input.employeeID, input.roleID], function (err, res) {
+        if (err) {
+          throw err;
+        }
+
+        console.table(res);
 
         initialPrompt();
       });

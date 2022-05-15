@@ -22,6 +22,5 @@ CREATE TABLE employee (
     last_name VARCHAR(30) NOT NULL,
     role_ID INTEGER, 
     manager_ID INTEGER,
-    manager BOOLEAN NOT NULL,
     PRIMARY KEY (id)
 );
